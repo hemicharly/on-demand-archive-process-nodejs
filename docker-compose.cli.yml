@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  yarn:
+    image: public.ecr.aws/docker/library/node:20.9-alpine3.17
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    entrypoint: yarn
+
