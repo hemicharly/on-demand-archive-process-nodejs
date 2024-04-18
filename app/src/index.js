@@ -65,8 +65,8 @@ const run = async () => {
     try {
         const readStreamCSV = createReadStream('file.csv');
         await pipefyStreams(readStreamCSV, transformer, processWrite());
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        console.error("Ocorreu um erro durante a execução:", error);
     }
 }
 
