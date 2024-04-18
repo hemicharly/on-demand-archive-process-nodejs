@@ -1,6 +1,27 @@
+import 'dotenv/config';
 import {createReadStream} from 'fs';
 import {pipeline, Writable} from 'stream';
 import {parse} from '@fast-csv/parse';
+import {createConnection} from 'mysql';
+
+const config = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+}
+
+const connection = createConnection(config);
+
+const dbConnect = async () => new Promise((resolve, reject) => {
+    connection.connect((error) => {
+        if (error) {
+            reject(error);
+        }
+        console.log('Conexão bem-sucedida ao banco de dados MySQL.');
+        resolve();
+    });
+});
 
 
 const pipefyStreams = async (...args) => {
@@ -11,8 +32,16 @@ const pipefyStreams = async (...args) => {
     });
 }
 
+const readStreamCSV = (filename) => {
+    const readStream = createReadStream(filename);
+    readStream.on('error', (error) => {
+        throw new Error(`Erro ao ler o arquivo CSV: ${error.message}`);
+    });
+    return readStream;
+}
+
 const transformer = parse({
-    delimiter: ',',
+    delimiter: ';',
     headers: true,
     encoding: 'utf8',
 });
@@ -20,10 +49,11 @@ const transformer = parse({
 const processWrite = () => {
     let batchData = [];
     const batchSize = 5;
-
     const processDatabaseBatch = async (data = []) => {
         try {
-            /*TODO: Logica para persistir no banco de dados*/
+            const values = data.map((item) => [item.NAME, item.CITY, item.STATE]);
+            const query = 'INSERT INTO PERSON (NAME, CITY, STATE) VALUES ?';
+            await insertBatchTransactional(query, values);
             console.log("Inserindo lote no banco de dados:", data.length);
         } catch (error) {
             throw new Error(`Erro ao inserir lote no banco de dados: ${error.message}`);
@@ -61,13 +91,45 @@ const processWrite = () => {
     });
 }
 
+
+const insertBatchTransactional = (query, values) => new Promise((resolve, reject) => {
+    connection.beginTransaction((error) => {
+        if (error) {
+            reject(error);
+            return;
+        }
+        connection.query(query, [values], (error) => {
+            if (error) {
+                connection.rollback(() => {
+                    reject(error);
+                });
+            } else {
+                connection.commit((error) => {
+                    if (error) {
+                        connection.rollback(() => {
+                            reject(error);
+                        });
+                    } else {
+                        resolve();
+                    }
+                });
+            }
+        });
+    });
+});
+
+
 const run = async () => {
     try {
-        const readStreamCSV = createReadStream('file.csv');
-        await pipefyStreams(readStreamCSV, transformer, processWrite());
+        await dbConnect();
+        await pipefyStreams(readStreamCSV('file.csv'), transformer, processWrite());
     } catch (error) {
         console.error("Ocorreu um erro durante a execução:", error);
+        process.exit(1);
+    } finally {
+        console.log('Fim da execução!');
+        process.exit(0);
     }
 }
 
-run();
+run().then();

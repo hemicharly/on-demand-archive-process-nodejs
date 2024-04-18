@@ -10,11 +10,10 @@
 
 ##### 2.1. Start project in mode development
 
-* It is recommended to create aliases for `docker-compose -f docker-compose.cli.yml run --rm` with `dcli`.
-
 To start project using docker use the commands
 
 | COMMAND      | DESCRIPTION                     |
 |--------------|---------------------------------|
 | make install | Installing dependencies project |
+| make mysql   | Execute container mysql         |
 | make start   | Execute application             |

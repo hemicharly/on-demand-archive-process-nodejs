@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  db-on-demand:
+    container_name: db-on-demand
+    image: mysql:8.0.28
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    networks:
+      - net_process_on_demand
+    environment:
+      MYSQL_DATABASE: db_on_demand
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - 'db-data-on-demand-mysql:/var/lib/mysql'
+      - 'db-data-on-demand-mysql:/etc/mysql/conf.d/my.cnf'
+      - 'db-data-on-demand-mysql:/docker-entrypoint-initdb.d'
+
+volumes:
+  db-data-on-demand-mysql: ~
+
+networks:
+  net_process_on_demand:
+    external: true

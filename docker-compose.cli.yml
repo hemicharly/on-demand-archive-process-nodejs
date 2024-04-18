@@ -4,7 +4,18 @@ services:
   yarn:
     image: public.ecr.aws/docker/library/node:20.9-alpine3.17
     working_dir: /app
+    environment:
+      DB_HOST: "db-on-demand"
+      DB_DATABASE: db_on_demand
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    networks:
+      - net_process_on_demand
     volumes:
       - ./app:/app
     entrypoint: yarn
+
+networks:
+  net_process_on_demand:
+    external: true
 
