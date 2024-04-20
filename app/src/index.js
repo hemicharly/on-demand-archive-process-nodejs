@@ -4,8 +4,10 @@ import {DataProcessor} from "./services/DataProcessor.js";
 
 
 const run = async () => {
+    console.log('Start of execution.');
+    const startTime = process.hrtime();
     try {
-        console.log('Start of execution!');
+
         const configOptions = {
             host: process.env.DB_HOST,
             user: process.env.DB_USERNAME,
@@ -14,12 +16,14 @@ const run = async () => {
         };
         const databaseManager = new DatabaseManager(configOptions);
         const dataProcessor = new DataProcessor(databaseManager);
-        await dataProcessor.bulkInsert('file.csv', 3);
+        await dataProcessor.bulkInsert('file.csv', 5000);
     } catch (error) {
         console.error("An error occurred during execution:", error);
         process.exit(1);
     } finally {
-        console.log('End of execution!');
+        const endTime = process.hrtime(startTime);
+        const duration = (endTime[0] * 1000 + endTime[1] / 1000000).toFixed(2);
+        console.log(`End of execution with: ${duration}ms`);
         process.exit(0);
     }
 }

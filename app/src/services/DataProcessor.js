@@ -26,11 +26,12 @@ export class DataProcessor {
     }
 
     #processWrite(batchSize) {
+        let count = 0;
         let batchData = [];
         const processDatabaseBatch = async (data = []) => {
             try {
                 await this.#databaseManager.insertBatchTransactional(data);
-                console.log("Inserting batch into the database: ", data.length);
+                console.log(`Inserting batch into the database with ${data.length} records`);
             } catch (error) {
                 throw new Error(`Error when inserting batch into database: ${error.message}`);
             }
@@ -43,6 +44,7 @@ export class DataProcessor {
                 if (batchData.length >= batchSize) {
                     try {
                         await processDatabaseBatch(batchData.slice());
+                        count = count + batchData.length;
                         batchData = [];
                         callback();
                     } catch (error) {
@@ -56,6 +58,7 @@ export class DataProcessor {
                 if (batchData.length > 0) {
                     try {
                         await processDatabaseBatch(batchData.slice());
+                        count = count + batchData.length;
                         callback();
                     } catch (error) {
                         callback(error);
@@ -63,6 +66,7 @@ export class DataProcessor {
                 } else {
                     callback();
                 }
+                console.log(`${count} lines were processed!`);
             }
         });
     }
