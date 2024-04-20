@@ -7,7 +7,11 @@ const run = async () => {
     console.log('Start of execution.');
     const startTime = process.hrtime();
     try {
-
+        const parseCsvOptions = {
+            delimiter: ';',
+            headers: true,
+            encoding: 'utf8',
+        }
         const configOptions = {
             host: process.env.DB_HOST,
             user: process.env.DB_USERNAME,
@@ -15,8 +19,8 @@ const run = async () => {
             database: process.env.DB_DATABASE,
         };
         const databaseManager = new DatabaseManager(configOptions);
-        const dataProcessor = new DataProcessor(databaseManager);
-        await dataProcessor.bulkInsert('file.csv', 5000);
+        const dataProcessor = new DataProcessor(databaseManager, 'file.csv');
+        await dataProcessor.bulkInsert(5000, parseCsvOptions);
     } catch (error) {
         console.error("An error occurred during execution:", error);
         process.exit(1);

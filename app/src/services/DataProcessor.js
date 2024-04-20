@@ -1,12 +1,35 @@
-import {createReadStream} from 'fs';
+import {createReadStream, statSync} from 'fs';
 import {pipeline, Writable} from 'stream';
 import {parse} from '@fast-csv/parse';
 
 export class DataProcessor {
     #databaseManager;
+    #filename = 0;
+    #bytesProcessed = 0;
+    #fileSize = 0;
 
-    constructor(databaseManager) {
+    constructor(databaseManager, filename) {
         this.#databaseManager = databaseManager;
+        this.#filename = filename;
+        this.#bytesProcessed = 0;
+        this.#fileSize = statSync(filename).size;
+    }
+
+    #formatFileSize(sizeInBytes) {
+        const KB = 1024;
+        const MB = 1024 * KB;
+        const GB = 1024 * MB;
+
+        if (sizeInBytes < KB) {
+            return `${sizeInBytes} B`;
+        }
+        if (sizeInBytes < MB) {
+            return `${(sizeInBytes / KB).toFixed(2)} KB`;
+        }
+        if (sizeInBytes < GB) {
+            return `${(sizeInBytes / MB).toFixed(2)} MB`;
+        }
+        return `${(sizeInBytes / GB).toFixed(2)} GB`;
     }
 
     async #pipefyStreams(...args) {
@@ -22,6 +45,11 @@ export class DataProcessor {
         readStream.on('error', (error) => {
             throw new Error(`Error reading CSV file: ${error.message}`);
         });
+        readStream.on('data', (chunk) => {
+            this.#bytesProcessed += chunk.length;
+            const progress = ((this.#bytesProcessed / this.#fileSize) * 100).toFixed(2);
+            console.log(`The file has been read ${this.#formatFileSize(this.#bytesProcessed)} of ${this.#formatFileSize(this.#fileSize)} (${progress}%)`);
+        });
         return readStream;
     }
 
@@ -31,7 +59,6 @@ export class DataProcessor {
         const processDatabaseBatch = async (data = []) => {
             try {
                 await this.#databaseManager.insertBatchTransactional(data);
-                console.log(`Inserting batch into the database with ${data.length} records`);
             } catch (error) {
                 throw new Error(`Error when inserting batch into database: ${error.message}`);
             }
@@ -45,7 +72,7 @@ export class DataProcessor {
                     try {
                         const data = batchData.slice();
                         await processDatabaseBatch(data);
-                        count = count + data.length;
+                        count += data.length;
                         batchData = [];
                         callback();
                     } catch (error) {
@@ -60,7 +87,7 @@ export class DataProcessor {
                     try {
                         const data = batchData.slice();
                         await processDatabaseBatch(data);
-                        count = count + data.length;
+                        count += data.length;
                         callback();
                     } catch (error) {
                         callback(error);
@@ -73,12 +100,12 @@ export class DataProcessor {
         });
     }
 
-    async bulkInsert(filename, batchSize = 1000, parseCsvOptions = {
+    async bulkInsert(batchSize = 1000, parseCsvOptions = {
         delimiter: ';',
         headers: true,
         encoding: 'utf8',
     }) {
         await this.#databaseManager.connect();
-        await this.#pipefyStreams(this.#readStreamCSV(filename), parse(parseCsvOptions), this.#processWrite(batchSize));
+        await this.#pipefyStreams(this.#readStreamCSV(this.#filename), parse(parseCsvOptions), this.#processWrite(batchSize));
     }
 }
