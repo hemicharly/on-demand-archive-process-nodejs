@@ -52,13 +52,25 @@ deal with large volumes of data.
  make mysql
  ```
 
-##### 2.2. Installing project dependencies
+##### 2.2. Create table in MySQL
+
+ ```bash
+  create table if not exists PERSON (
+      ID          bigint auto_increment              primary key,
+      NAME        varchar(255)                       not null,
+      CITY        varchar(255)                       not null,
+      STATE       varchar(100)                       not null,
+      CREATED_AT  datetime default CURRENT_TIMESTAMP not null
+  );
+ ```
+
+##### 2.3. Installing project dependencies
 
  ```bash
  make install
  ```
 
-##### 2.3. Run application
+##### 2.4. Run application
 
  ```bash
  make start
