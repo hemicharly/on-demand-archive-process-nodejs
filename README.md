@@ -1,10 +1,11 @@
 ## ON-DEMAND ARCHIVE PROCESS
 
-This project demonstrates an example of a Node.js application, aiming to apply the power of Node.js stream and pipeline
-data processing to efficiently process large datasets in batches, minimizing memory consumption. It reads a CSV file in
-chunks using streams, parses the data with the '@fast-csv/parse' package, and processes it in batches before inserting
-it into the MySQL database. Using streams and pipelines allows more efficient and scalable execution, especially when
-dealing with large volumes of data.
+
+This project demonstrates an example Node.js application, with the goal of applying the power of Node.js flow and
+pipeline in data processing, aiming to efficiently process large data sets in batches, minimizing memory consumption. It
+reads a CSV file into chunks using streams, parses the csv data and batch processes it before inserting in the MySQL
+database. The use of streams and pipelines allows for more efficient and scalable execution, especially when
+deal with large volumes of data.
 
 ### Keywords
 
@@ -19,11 +20,13 @@ dealing with large volumes of data.
 * Finalizes execution, dealing with errors and ending the process.
 
 #### SYSTEM DESIGN DIAGRAM
+
 <div style="text-align: center;">
     <img src="diagram/system_design_diagram.svg" alt="system_design_diagram" />
 </div>
 
 #### SEQUENCE DIAGRAM
+
 <div style="text-align: center;">
     <img src="diagram/sequence_diagram.svg" alt="sequence_diagram" />
 </div>
@@ -43,12 +46,20 @@ dealing with large volumes of data.
 
 #### 2. Steps to run this project
 
-##### 2.1. Start project in mode development
+##### 2.1. Start MySQL docker container
 
-To start project using docker use the commands
+ ```bash
+ make mysql
+ ```
 
-| COMMAND      | DESCRIPTION                     |
-|--------------|---------------------------------|
-| make install | Installing dependencies project |
-| make mysql   | Execute container mysql         |
-| make start   | Execute application             |
+##### 2.2. Installing project dependencies
+
+ ```bash
+ make install
+ ```
+
+##### 2.3. Run application
+
+ ```bash
+ make start
+ ```
