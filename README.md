@@ -1,7 +1,7 @@
 ## ON-DEMAND ARCHIVE PROCESS
 
 
-This project demonstrates an example Node.js application, with the goal of applying the power of Node.js flow and
+This project demonstrates an example Node.js application, with the goal of applying the power of Node.js stream and
 pipeline in data processing, aiming to efficiently process large data sets in batches, minimizing memory consumption. It
 reads a CSV file into chunks using streams, parses the csv data and batch processes it before inserting in the MySQL
 database. The use of streams and pipelines allows for more efficient and scalable execution, especially when
