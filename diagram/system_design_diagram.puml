@@ -1,0 +1,59 @@
+@startuml
+
+title SYSTEM DESIGN DIAGRAM\n\n
+
+skinparam package {
+    BackgroundColor #F0F0F0
+    BorderColor DarkSlateGray
+}
+
+skinparam component {
+    BackgroundColor DodgerBlue
+    BorderColor DarkSlateGray
+    FontColor White
+}
+
+skinparam note {
+    BackgroundColor LightGray
+    BorderColor DarkSlateGray
+}
+
+package "Node.js Application" {
+    [Index] --> [DataProcessor]
+    [DataProcessor] --> [DatabaseManager]
+}
+
+package "External Systems" {
+    [DatabaseMySQL]
+}
+
+note right of [Index]
+    This script is the application's entry point.
+    It configures the environment, creates an instance of the
+    **DatabaseManager** with the database settings, instantiates
+    the **DataProcessor** passing the **DatabaseManager** as a dependency,
+    and finally executes the DataProcessor's bulkInsert method
+    to process and insert the data from the CSV file into the database.
+end note
+
+note right of [DataProcessor]
+    This class encapsulates the data processing logic of the CSV file.
+    It reads the CSV file, parses the data, and inserts the data in batches
+    into the database using the **DatabaseManager**.
+end note
+
+note right of [DatabaseManager]
+    This class is responsible for managing the connection to the MySQL database
+    and perform related operations such as batch insertion of transactional data.
+end note
+
+note right of [DatabaseMySQL]
+    MySQL Database
+end note
+
+
+
+footer \n**Page** 1 **of** 1\n**Author**: Hemicharly Thiago\nRendered with PlantUML Version: **%version()**
+
+
+@enduml

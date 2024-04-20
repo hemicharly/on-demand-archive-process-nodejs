@@ -6,7 +6,7 @@ chunks using streams, parses the data with the '@fast-csv/parse' package, and pr
 it into the MySQL database. Using streams and pipelines allows more efficient and scalable execution, especially when
 dealing with large volumes of data.
 
-## Keywords
+### Keywords
 
 *Keywords*: Node.js, Stream, Pipeline, Batch File Insert, Performance, Scalability, Memory, Data processing, MySQL.
 
@@ -18,8 +18,14 @@ dealing with large volumes of data.
 * Inserts batches of data into the database.
 * Finalizes execution, dealing with errors and ending the process.
 
+#### SYSTEM DESIGN DIAGRAM
 <div style="text-align: center;">
-    <img src="./diagram/diagram.svg" alt="diagram" />
+    <img src="diagram/system_design_diagram.svg" alt="system_design_diagram" />
+</div>
+
+#### SEQUENCE DIAGRAM
+<div style="text-align: center;">
+    <img src="diagram/sequence_diagram.svg" alt="sequence_diagram" />
 </div>
 
 #### 1. Requirements Installation
