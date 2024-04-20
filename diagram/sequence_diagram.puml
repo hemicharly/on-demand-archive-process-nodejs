@@ -22,8 +22,8 @@ skinparam sequence {
 
 actor user
 participant "Index" as Index
-participant "DatabaseManager" as DBManager
 participant "DataProcessor" as Processor
+participant "DatabaseManager" as DBManager
 
 user -> Index++: Start process
 activate Index
@@ -46,11 +46,13 @@ DBManager --> Processor: Connection successful
 deactivate DBManager
 Processor -> Processor: Read CSV file
 Processor -> Processor: Parse CSV
-Processor -> Processor: Process and insert batches into the database
+Processor -> DBManager++: Process and insert batches into the database
 activate Processor
 Processor --> Processor: Inserting batch into the database...
 Processor --> Processor: Inserting batch into the database...
 Processor --> Processor: Inserting batch into the database...
+DBManager --> Processor: Data entered in batches into the database
+deactivate DBManager
 Processor --> Processor: End of process
 deactivate Processor
 Processor --> Index: End of execution!
