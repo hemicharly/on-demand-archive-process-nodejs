@@ -43,8 +43,9 @@ export class DataProcessor {
                 batchData.push(chunk);
                 if (batchData.length >= batchSize) {
                     try {
-                        await processDatabaseBatch(batchData.slice());
-                        count = count + batchData.length;
+                        const data = batchData.slice();
+                        await processDatabaseBatch(data);
+                        count = count + data.length;
                         batchData = [];
                         callback();
                     } catch (error) {
@@ -57,8 +58,9 @@ export class DataProcessor {
             final: async (callback) => {
                 if (batchData.length > 0) {
                     try {
-                        await processDatabaseBatch(batchData.slice());
-                        count = count + batchData.length;
+                        const data = batchData.slice();
+                        await processDatabaseBatch(data);
+                        count = count + data.length;
                         callback();
                     } catch (error) {
                         callback(error);
