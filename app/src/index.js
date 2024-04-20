@@ -16,7 +16,7 @@ const run = async () => {
         };
         const databaseManager = new DatabaseManager(configOptions);
         const dataProcessor = new DataProcessor(databaseManager);
-        await dataProcessor.bulkInsert('file.csv', 5000);
+        await dataProcessor.bulkInsert('file.csv', 3);
     } catch (error) {
         console.error("An error occurred during execution:", error);
         process.exit(1);
