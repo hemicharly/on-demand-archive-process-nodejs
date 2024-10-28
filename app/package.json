@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fast-csv/parse": "^5.0.0",
+    "@fast-csv/parse": "^5.0.2",
     "dotenv": "^16.4.5",
     "mysql": "^2.18.1"
   }
